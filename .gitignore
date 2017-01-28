@@ -1,0 +1,15 @@
+### JetBrains
+.idea
+firehose-mock.iml
+
+### MacOS
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+### Windows
+Thumbs.db
+ehthumbs.db
+
+### Java
+target
