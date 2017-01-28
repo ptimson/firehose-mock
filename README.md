@@ -2,6 +2,8 @@
 An embedded Java mock for AWS Kinesis Firehose
 
 ## Getting Started
+### AWSFirehoseMock
+
 ```java
 FirehoseMock firehoseMock = new FirehoseMock.Builder()
         .withPort(7070)                  // Optional - If not supplied will use free random port
@@ -14,18 +16,18 @@ FirehoseMock firehoseMock = new FirehoseMock.Builder()
 
 `AWSFirehoseUtil` is an optional helper class used to create requests that are supported with this mock. 
 
-### Create Client
+#### Create Client
 ```java
 AmazonKinesisFirehose firehoseClient = AWSFirehoseUtil.createClient("http://127.0.0.1:7070", "eu-west-1");
 ```
 
-### Create PutRecord Request
+#### Create PutRecord Request
 ```java
 PutRecordRequest putRequest = AWSFirehoseUtil.createPutRequest("myDeliveryStream", "myData");
 firehoseClient.putRecord(putRequest);
 ```
 
-### Create CreateDeliveryStream Request
+#### Create CreateDeliveryStream Request
 ```java
 ExtendedS3DestinationConfiguration s3StreamConfig = AWSFirehoseUtil.createS3DeliveryStream()
         .withS3BucketArn("arn:myBucketArn")
@@ -38,7 +40,7 @@ CreateDeliveryStreamRequest createDeliveryStreamRequest = AWSFirehoseUtil.create
 firehoseClient.createDeliveryStream(createDeliveryStreamRequest);
 ```
 
-### Create DeleteDeliveryStream Request
+#### Create DeleteDeliveryStream Request
 ```java
 DeleteDeliveryStreamRequest deleteStreamRequest = AWSFirehoseUtil.deleteDeliveryStreamRequest(streamName);
 firehoseClient.deleteDeliveryStream(deleteStreamRequest);
