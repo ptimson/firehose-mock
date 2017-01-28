@@ -1,0 +1,68 @@
+package io.timson.firehose;
+
+import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
+import com.amazonaws.services.kinesisfirehose.model.CompressionFormat;
+import com.amazonaws.services.kinesisfirehose.model.CreateDeliveryStreamRequest;
+import com.amazonaws.services.kinesisfirehose.model.DeleteDeliveryStreamRequest;
+import com.amazonaws.services.kinesisfirehose.model.ExtendedS3DestinationConfiguration;
+import com.amazonaws.services.kinesisfirehose.model.PutRecordRequest;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import io.timson.firehose.aws.AWSFirehoseUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class FirehoseMockTest {
+
+    private static final String ENDPOINT = "http://127.0.0.1:7070";
+    private static final String REGION = "eu-west-1";
+
+    private final AmazonKinesisFirehose firehoseClient = AWSFirehoseUtil.createClient(ENDPOINT, REGION);
+
+    private FirehoseMock firehoseMock;
+
+    @Before
+    public void setUp() throws Exception {
+        AmazonS3 amazonS3 = new AmazonS3Client();
+        FirehoseMock firehoseMock = new FirehoseMock.Builder()
+                .withPort(7070)
+                .withAmazonS3Client(amazonS3)
+                .build();
+        firehoseMock.start();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        firehoseMock.stop();
+    }
+
+    @Test
+    public void shouldAcceptPutRecordRequest() throws Exception {
+        final String streamName = "myDeliveryStream";
+        PutRecordRequest putRequest = AWSFirehoseUtil.createPutRequest(streamName, "myData");
+        firehoseClient.putRecord(putRequest);
+    }
+
+    @Test
+    public void shouldAcceptCreateDeliveryStreamRequest() throws Exception {
+        final ExtendedS3DestinationConfiguration s3StreamConfig = AWSFirehoseUtil.createS3DeliveryStream()
+                .withBufferIntervalSeconds(10)
+                .withBufferSizeMB(1024)
+                .withCompressionFormat(CompressionFormat.GZIP)
+                .withS3BucketArn("myBucketArn")
+                .withS3Prefix("myPrefix")
+                .build();
+        final String streamName = "myDeliveryStream";
+        CreateDeliveryStreamRequest createStreamRequest = AWSFirehoseUtil.createDeliveryStreamRequest(streamName, s3StreamConfig);
+        firehoseClient.createDeliveryStream(createStreamRequest);
+    }
+
+    @Test
+    public void shouldAcceptDeleteDeliveryStreamRequest() throws Exception {
+        final String streamName = "myDeliveryStream";
+        DeleteDeliveryStreamRequest deleteStreamRequest = AWSFirehoseUtil.deleteDeliveryStreamRequest(streamName);
+        firehoseClient.deleteDeliveryStream(deleteStreamRequest);
+    }
+
+}
