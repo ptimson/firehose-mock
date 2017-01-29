@@ -23,15 +23,16 @@ public class S3DeliveryStream implements DeliveryStream {
 
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final long MEGABYTE = 1024L * 1024L;
-    private static final DateTimeFormatter YYYY_MM_DD_HH = DateTimeFormatter.ofPattern("yyyy/MM/dd/HH/");
-    private static final DateTimeFormatter YYYY_MM_DD_HH_MM_SS = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-");
+    private static final DateTimeFormatter YYYY_MM_DD_HH = DateTimeFormatter.ofPattern("yyyy/MM/dd/HH");
+    private static final DateTimeFormatter YYYY_MM_DD_HH_MM_SS = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
 
     private final String name;
     private final S3Client s3Client;
     private final String s3Bucket;
     private final String s3Prefix;
     private final Integer bufferIntervalMs;
-    private final Integer bufferFlushSizeMb;
+    private final int bufferFlushSizeMb;
+    private final long bufferFlushSizeBytes;
     private final CompressionFormat compressionFormat;
 
     private StringBuilder buffer = new StringBuilder();
@@ -46,8 +47,9 @@ public class S3DeliveryStream implements DeliveryStream {
         this.s3Prefix = s3Prefix;
         this.bufferIntervalMs = bufferIntervalSeconds * 1000;
         this.bufferFlushSizeMb = bufferSizeMb;
+        this.bufferFlushSizeBytes = bufferSizeMb * MEGABYTE;
         this.compressionFormat = compressionFormat;
-        initFlushTimer();
+        startFlushTimer();
     }
 
     private String extractBucketName(String s3BucketArn) {
@@ -57,19 +59,15 @@ public class S3DeliveryStream implements DeliveryStream {
         return s3BucketArn.substring("arn:aws:s3:::".length());
     }
 
-    private void initFlushTimer() {
+    private void startFlushTimer() {
         flushTimerTask = new TimerTask() {
             @Override
             public void run() {
                 flush();
             }
         };
-        flushTimer = new Timer("flushTimer");
-        startFlushTimer();
-    }
-
-    private void startFlushTimer() {
-        flushTimer.schedule(flushTimerTask, 0, bufferIntervalMs * 1000);
+        flushTimer = new Timer();
+        flushTimer.schedule(flushTimerTask, 0, bufferIntervalMs);
     }
 
     private void stopFlushTimer() {
@@ -77,10 +75,10 @@ public class S3DeliveryStream implements DeliveryStream {
     }
 
     @Override
-    public void write(String data) {
+    public synchronized void write(String data) {
         buffer.append(data);
         bufferSize += data.getBytes(UTF_8).length;
-        if (bufferSize * MEGABYTE >= bufferFlushSizeMb) {
+        if (bufferSize >= bufferFlushSizeBytes) {
             resetFlushTimer();
             flush();
         }
@@ -134,7 +132,7 @@ public class S3DeliveryStream implements DeliveryStream {
     private String generateS3Path() {
         final LocalDateTime now = LocalDateTime.now(UTC);
         // "kfh2017/01/27/17/ilyas-3-2017-01-27-17-26-52-381352ec-2ab1-4fca-bcfe-d02f31b11cb4"
-        return s3Prefix + now.format(YYYY_MM_DD_HH) + name + now.format(YYYY_MM_DD_HH_MM_SS) + UUID.randomUUID().toString();
+        return s3Prefix + now.format(YYYY_MM_DD_HH) + '/' + name + '-' + bufferFlushSizeMb + '-' + now.format(YYYY_MM_DD_HH_MM_SS) + '-' + UUID.randomUUID().toString();
     }
 
     public static class S3DeliveryStreamBuilder {

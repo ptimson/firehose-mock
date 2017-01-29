@@ -6,9 +6,8 @@ import com.amazonaws.services.kinesisfirehose.model.CreateDeliveryStreamRequest;
 import com.amazonaws.services.kinesisfirehose.model.DeleteDeliveryStreamRequest;
 import com.amazonaws.services.kinesisfirehose.model.ExtendedS3DestinationConfiguration;
 import com.amazonaws.services.kinesisfirehose.model.PutRecordRequest;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import io.timson.firehose.aws.AWSFirehoseUtil;
+import io.timson.firehose.test.TestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +16,7 @@ public class FirehoseMockTest {
 
     private static final String ENDPOINT = "http://127.0.0.1:7070";
     private static final String REGION = "eu-west-1";
+    private static final int KILOBYTES = 1024;
 
     private final AmazonKinesisFirehose firehoseClient = AWSFirehoseUtil.createClient(ENDPOINT, REGION);
 
@@ -24,10 +24,8 @@ public class FirehoseMockTest {
 
     @Before
     public void setUp() throws Exception {
-        AmazonS3 amazonS3 = new AmazonS3Client();
-        FirehoseMock firehoseMock = new FirehoseMock.Builder()
+        firehoseMock = new FirehoseMock.Builder()
                 .withPort(7070)
-                .withAmazonS3Client(amazonS3)
                 .build();
         firehoseMock.start();
     }
@@ -63,6 +61,25 @@ public class FirehoseMockTest {
         final String streamName = "myDeliveryStream";
         DeleteDeliveryStreamRequest deleteStreamRequest = AWSFirehoseUtil.deleteDeliveryStreamRequest(streamName);
         firehoseClient.deleteDeliveryStream(deleteStreamRequest);
+    }
+
+    @Test
+    public void shouldWriteToS3WhenReachedBufferSize() throws Exception {
+        final String streamName = "myDeliveryStream";
+        final ExtendedS3DestinationConfiguration s3StreamConfig = AWSFirehoseUtil.createS3DeliveryStream()
+                .withBufferIntervalSeconds(4)
+                .withBufferSizeMB(1)
+//                .withCompressionFormat(CompressionFormat.GZIP)
+                .withS3BucketArn("arn:aws:s3:::scv-consumer-lambda-temp")
+                .withS3Prefix("kfh/")
+                .build();
+        CreateDeliveryStreamRequest createStreamRequest = AWSFirehoseUtil.createDeliveryStreamRequest(streamName, s3StreamConfig);
+        firehoseClient.createDeliveryStream(createStreamRequest);
+        String data = TestUtil.createStringOfSize(512 * KILOBYTES);
+        PutRecordRequest putRequest = AWSFirehoseUtil.createPutRequest(streamName, data);
+        firehoseClient.putRecord(putRequest);
+        firehoseClient.putRecord(putRequest);
+        firehoseClient.putRecord(putRequest);
     }
 
 }

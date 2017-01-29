@@ -2,19 +2,29 @@
 An embedded Java mock for AWS Kinesis Firehose
 
 ## Getting Started
-### AWSFirehoseMock
+### Create Default FirehoseMock
+```java
+FirehoseMock firehoseMock = FirehoseMock.defaultMock();
+firehoseMock.start();
+Integer port = firehoseMock.getPort(); 
+```
 
+### Create Custom FirehoseMock
 ```java
 FirehoseMock firehoseMock = new FirehoseMock.Builder()
-        .withPort(7070)                  // Optional - If not supplied will use free random port
+        .withPort(7070)                  // Optional - If not supplied will use a random free port
         .withAmazonS3Client(amazonS3)    // Optional - If not supplied will use AmazonS3ClientBuilder.defaultClient()
         .build();
+firehoseMock.start();
 ```
 
 ## Creating Requests
-### AWSFirehoseUtil
+You can then interact with the mock using the AWS Kinesis Firehose SDK - as you would interact with firehose normally. 
+However you will need to set the client's endpoint to `localhost:<port>`
 
-`AWSFirehoseUtil` is an optional helper class used to create requests that are supported with this mock. 
+### AWSFirehoseUtil
+`AWSFirehoseUtil.class` is an optional helper class used to setup the client and create requests that are supported with 
+this mock. 
 
 #### Create Client
 ```java
@@ -49,7 +59,7 @@ firehoseClient.deleteDeliveryStream(deleteStreamRequest);
 Firehose Mock is a WIP and so far only supports the following 3 APIs.
 
 ### PutRecord
-```json
+```
 {
    "DeliveryStreamName": "string",
    "Record": { 
@@ -57,9 +67,11 @@ Firehose Mock is a WIP and so far only supports the following 3 APIs.
    }
 }
 ```
+See [AWS PutRecord API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html) for more details
 
 ### CreateDeliveryStream
-```json
+Currently FirehoseMock only supports S3 Delivery Streams with the following options:  
+```
 {
     "DeliveryStreamName": "string",
     "ExtendedS3DestinationConfiguration": {
@@ -68,21 +80,21 @@ Firehose Mock is a WIP and so far only supports the following 3 APIs.
             "IntervalInSeconds": 300,        // Optional - Default: 300
             "SizeInMBs": 5                   // Optional - Default: 5
         },
-        "CompressionFormat": "string",       // Optional
-        "Prefix": "string"                   // Optional - Default: UNCOMPRESSED
+        "CompressionFormat": "string",       // Optional - Default: UNCOMPRESSED
+        "Prefix": "string"                   // Optional - Default: ""
     }
 }
-```
-    
-[AWS CreateDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_CreateDeliveryStream.html)
+``` 
+See [AWS CreateDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_CreateDeliveryStream.html) for more details
 
 ### DeleteDeliveryStream
 
-```json
+```
 {
    "DeliveryStreamName": "string"
 }
 ```
+See [AWS DeleteDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_DeleteDeliveryStream.html) for more details
 
 ## License
 Copyright (C) 2017 Peter Timson

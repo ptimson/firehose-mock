@@ -40,8 +40,8 @@ public class AWSFirehoseUtil {
         return createDeliveryStreamRequest;
     }
 
-    public static S3StreamBuilder createS3DeliveryStream() {
-        return new S3StreamBuilder();
+    public static S3StreamRequestBuilder createS3DeliveryStream() {
+        return new S3StreamRequestBuilder();
     }
 
     public static DeleteDeliveryStreamRequest deleteDeliveryStreamRequest(String deliveryStreamName) {

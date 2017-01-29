@@ -1,6 +1,5 @@
 package io.timson.firehose;
 
-
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.timson.firehose.aws.S3Client;
@@ -12,6 +11,9 @@ import io.timson.firehose.util.FirehoseUtil;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class FirehoseMock {
 
@@ -49,13 +51,18 @@ public class FirehoseMock {
 
     public void stop() throws Exception {
         if (server.isRunning()) {
-            deliveryStreamService.listStreams().forEach(deliveryStreamService::deleteStream);
+            Set<String> streams = new HashSet<>(deliveryStreamService.listStreams());
+            streams.forEach(deliveryStreamService::deleteStream);
             server.stop();
         }
     }
 
     public Integer getPort() {
         return port;
+    }
+
+    public static FirehoseMock defaultMock() {
+        return new Builder().build();
     }
 
     public static class Builder {
