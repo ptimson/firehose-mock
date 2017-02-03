@@ -1,4 +1,5 @@
 # Firehose Mock
+[![Github All Releases](https://img.shields.io/github/downloads/ptimson/firehose-mock/total.svg?style=flat)](https://github.com/ptimson/firehose-mock/releases/)
 An embedded Java mock for AWS Kinesis Firehose
 
 ## Getting Started
@@ -12,8 +13,8 @@ Integer port = firehoseMock.getPort();
 ### Create Custom FirehoseMock
 ```java
 FirehoseMock firehoseMock = new FirehoseMock.Builder()
-        .withPort(7070)                  // Optional - If not supplied will use a random free port
-        .withAmazonS3Client(amazonS3)    // Optional - If not supplied will use AmazonS3ClientBuilder.defaultClient()
+        .withPort(7070)                // Optional - If not supplied will use a random free port
+        .withAmazonS3Client(amazonS3)  // Optional - If not supplied will use AmazonS3ClientBuilder.defaultClient()
         .build();
 firehoseMock.start();
 ```
@@ -67,7 +68,7 @@ Firehose Mock is a WIP and so far only supports the following 3 APIs.
    }
 }
 ```
-See [AWS PutRecord API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html) for more details
+See [AWS PutRecord API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html) for more details.
 
 ### CreateDeliveryStream
 Currently FirehoseMock only supports S3 Delivery Streams with the following options:  
@@ -85,7 +86,7 @@ Currently FirehoseMock only supports S3 Delivery Streams with the following opti
     }
 }
 ``` 
-See [AWS CreateDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_CreateDeliveryStream.html) for more details
+See [AWS CreateDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_CreateDeliveryStream.html) for more details.
 
 ### DeleteDeliveryStream
 
@@ -94,7 +95,7 @@ See [AWS CreateDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/late
    "DeliveryStreamName": "string"
 }
 ```
-See [AWS DeleteDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_DeleteDeliveryStream.html) for more details
+See [AWS DeleteDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_DeleteDeliveryStream.html) for more details.
 
 ## License
 Copyright (C) 2017 Peter Timson

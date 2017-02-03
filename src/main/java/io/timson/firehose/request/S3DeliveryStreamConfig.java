@@ -25,9 +25,9 @@ public class S3DeliveryStreamConfig {
     private Map<String, Object> otherProperties = new HashMap<>();
 
     @JsonProperty("BufferingHints")
-    public void setBuffer(Map<String, Integer> bufferConfig) {
-        this.bufferIntervalSeconds = bufferConfig.get("IntervalInSeconds");
-        this.bufferSizeMb = bufferConfig.get("SizeInMBs");
+    public void setBuffer(Map<String, Object> bufferConfig) {
+        this.bufferIntervalSeconds = (Integer) bufferConfig.get("IntervalInSeconds");
+        this.bufferSizeMb = (Integer) bufferConfig.get("SizeInMBs");
     }
 
     @JsonAnyGetter

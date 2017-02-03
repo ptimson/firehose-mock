@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 
-import static com.sun.xml.internal.messaging.saaj.util.Base64.base64Decode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class PutRequest {
 
@@ -20,7 +21,8 @@ public class PutRequest {
     @JsonProperty("Record")
     public void setData(Map<String, String> record) {
         String encodedData = record.get("Data");
-        this.data = base64Decode(encodedData);
+        byte[] decodedData = Base64.getDecoder().decode(encodedData);
+        this.data = new String(decodedData, UTF_8);
     }
 
     public static PutRequest fromJson(String json) throws IOException {

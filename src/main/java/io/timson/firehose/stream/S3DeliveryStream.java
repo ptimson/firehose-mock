@@ -23,6 +23,7 @@ public class S3DeliveryStream implements DeliveryStream {
 
     private static final Charset UTF_8 = Charset.forName("UTF-8");
     private static final long MEGABYTE = 1024L * 1024L;
+    private static final int VERSION = 1;
     private static final DateTimeFormatter YYYY_MM_DD_HH = DateTimeFormatter.ofPattern("yyyy/MM/dd/HH");
     private static final DateTimeFormatter YYYY_MM_DD_HH_MM_SS = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
 
@@ -131,8 +132,7 @@ public class S3DeliveryStream implements DeliveryStream {
 
     private String generateS3Path() {
         final LocalDateTime now = LocalDateTime.now(UTC);
-        // "kfh2017/01/27/17/ilyas-3-2017-01-27-17-26-52-381352ec-2ab1-4fca-bcfe-d02f31b11cb4"
-        return s3Prefix + now.format(YYYY_MM_DD_HH) + '/' + name + '-' + bufferFlushSizeMb + '-' + now.format(YYYY_MM_DD_HH_MM_SS) + '-' + UUID.randomUUID().toString();
+        return s3Prefix + now.format(YYYY_MM_DD_HH) + '/' + name + '-' + VERSION + '-' + now.format(YYYY_MM_DD_HH_MM_SS) + '-' + UUID.randomUUID().toString();
     }
 
     public static class S3DeliveryStreamBuilder {

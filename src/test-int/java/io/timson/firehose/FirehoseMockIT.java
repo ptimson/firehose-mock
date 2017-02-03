@@ -12,7 +12,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FirehoseMockTest {
+// TODO Should be ITs
+public class FirehoseMockIT {
 
     private static final String ENDPOINT = "http://127.0.0.1:7070";
     private static final String REGION = "eu-west-1";
@@ -69,7 +70,7 @@ public class FirehoseMockTest {
         final ExtendedS3DestinationConfiguration s3StreamConfig = AWSFirehoseUtil.createS3DeliveryStream()
                 .withBufferIntervalSeconds(4)
                 .withBufferSizeMB(1)
-//                .withCompressionFormat(CompressionFormat.GZIP)
+                .withCompressionFormat(CompressionFormat.GZIP)
                 .withS3BucketArn("arn:aws:s3:::scv-consumer-lambda-temp")
                 .withS3Prefix("kfh/")
                 .build();
