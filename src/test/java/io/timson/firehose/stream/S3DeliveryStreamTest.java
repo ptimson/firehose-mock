@@ -149,4 +149,14 @@ public class S3DeliveryStreamTest {
         stream.stop();
     }
 
+    @Test
+    public void shouldNotThrowException_WhenTimerRestarts() throws Exception {
+        stream.write(LONG_MESSAGE);
+        Thread.sleep(50);
+        stream.write(LONG_MESSAGE);
+        Thread.sleep(50);
+
+        // Should not throw exception
+    }
+
 }
