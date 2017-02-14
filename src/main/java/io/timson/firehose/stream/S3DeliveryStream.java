@@ -34,11 +34,15 @@ public class S3DeliveryStream implements DeliveryStream {
     private final Long bufferIntervalMs;
     private final Long bufferFlushSizeBytes;
     private final CompressionFormat compressionFormat;
-
+    private final TimerTask flushTimerTask = new TimerTask() {
+        @Override
+        public void run() {
+            flush();
+        }
+    };
     private StringBuilder buffer = new StringBuilder();
     private long bufferSize = 0;
     private Timer flushTimer;
-    private TimerTask flushTimerTask;
 
     private S3DeliveryStream(String name,
                              S3Client s3Client,
@@ -64,17 +68,14 @@ public class S3DeliveryStream implements DeliveryStream {
     }
 
     private void startFlushTimer() {
-        flushTimerTask = new TimerTask() {
-            @Override
-            public void run() {
-                flush();
-            }
-        };
         flushTimer = new Timer();
         flushTimer.schedule(flushTimerTask, bufferIntervalMs);
     }
 
     private void stopFlushTimer() {
+        if (flushTimer == null) {
+            return;
+        }
         flushTimer.cancel();
     }
 

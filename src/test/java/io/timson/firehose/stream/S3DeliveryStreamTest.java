@@ -144,4 +144,9 @@ public class S3DeliveryStreamTest {
         verify(s3Client, only()).createSnappyObject(eq(S3_BUCKET), anyString(), eq(MESSAGE_1));
     }
 
+    @Test
+    public void shouldThrowNullPointer_WhenStoppedBeforeMessageWritten() throws Exception {
+        stream.stop();
+    }
+
 }
