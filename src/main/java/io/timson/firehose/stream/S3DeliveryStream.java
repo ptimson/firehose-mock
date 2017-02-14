@@ -31,9 +31,8 @@ public class S3DeliveryStream implements DeliveryStream {
     private final S3Client s3Client;
     private final String s3Bucket;
     private final String s3Prefix;
-    private final Integer bufferIntervalMs;
-    private final int bufferFlushSizeMb;
-    private final long bufferFlushSizeBytes;
+    private final Long bufferIntervalMs;
+    private final Long bufferFlushSizeBytes;
     private final CompressionFormat compressionFormat;
 
     private StringBuilder buffer = new StringBuilder();
@@ -41,16 +40,20 @@ public class S3DeliveryStream implements DeliveryStream {
     private Timer flushTimer;
     private TimerTask flushTimerTask;
 
-    private S3DeliveryStream(String name, S3Client s3Client, String s3BucketArn, String s3Prefix, Integer bufferIntervalSeconds, Integer bufferSizeMb, CompressionFormat compressionFormat) {
+    private S3DeliveryStream(String name,
+                             S3Client s3Client,
+                             String s3BucketArn,
+                             String s3Prefix,
+                             Long bufferIntervalMs,
+                             Long bufferSizeBytes,
+                             CompressionFormat compressionFormat) {
         this.name = name;
         this.s3Client = s3Client;
         this.s3Bucket = extractBucketName(s3BucketArn);
         this.s3Prefix = s3Prefix;
-        this.bufferIntervalMs = bufferIntervalSeconds * 1000;
-        this.bufferFlushSizeMb = bufferSizeMb;
-        this.bufferFlushSizeBytes = bufferSizeMb * MEGABYTE;
+        this.bufferIntervalMs = bufferIntervalMs;
+        this.bufferFlushSizeBytes = bufferSizeBytes;
         this.compressionFormat = compressionFormat;
-        startFlushTimer();
     }
 
     private String extractBucketName(String s3BucketArn) {
@@ -68,7 +71,7 @@ public class S3DeliveryStream implements DeliveryStream {
             }
         };
         flushTimer = new Timer();
-        flushTimer.schedule(flushTimerTask, 0, bufferIntervalMs);
+        flushTimer.schedule(flushTimerTask, bufferIntervalMs);
     }
 
     private void stopFlushTimer() {
@@ -77,17 +80,15 @@ public class S3DeliveryStream implements DeliveryStream {
 
     @Override
     public synchronized void write(String data) {
+        if (bufferSize == 0) {
+            startFlushTimer();
+        }
         buffer.append(data);
         bufferSize += data.getBytes(UTF_8).length;
         if (bufferSize >= bufferFlushSizeBytes) {
-            resetFlushTimer();
+            stopFlushTimer();
             flush();
         }
-    }
-
-    private void resetFlushTimer() {
-        stopFlushTimer();
-        startFlushTimer();
     }
 
     @Override
@@ -140,8 +141,8 @@ public class S3DeliveryStream implements DeliveryStream {
         private S3Client s3Client;
         private String s3BucketArn;
         private String s3Prefix = "";
-        private Integer bufferIntervalSeconds = 300;
-        private Integer bufferSizeMb = 5;
+        private Long bufferIntervalMs = 300 * 1000L; // 300 s
+        private Long bufferSizeBytes = 5 * MEGABYTE; // 5 MiB
         private CompressionFormat compressionFormat = UNCOMPRESSED;
 
         public S3DeliveryStreamBuilder withName(String name) {
@@ -167,13 +168,25 @@ public class S3DeliveryStream implements DeliveryStream {
 
         public S3DeliveryStreamBuilder withBufferIntervalSeconds(Integer bufferIntervalSeconds) {
             if (bufferIntervalSeconds == null) return this;
-            this.bufferIntervalSeconds = bufferIntervalSeconds;
+            this.bufferIntervalMs = bufferIntervalSeconds * 1000L;
+            return this;
+        }
+
+        public S3DeliveryStreamBuilder withBufferIntervalMilliseconds(Long bufferIntervalMilliseconds) {
+            if (bufferIntervalMilliseconds == null) return this;
+            this.bufferIntervalMs = bufferIntervalMilliseconds;
             return this;
         }
 
         public S3DeliveryStreamBuilder withBufferSizeMB(Integer bufferSizeMb) {
             if (bufferSizeMb == null) return this;
-            this.bufferSizeMb = bufferSizeMb;
+            this.bufferSizeBytes = bufferSizeMb * MEGABYTE;
+            return this;
+        }
+
+        public S3DeliveryStreamBuilder withBufferSizeBytes(Long bufferSizeBytes) {
+            if (bufferSizeBytes == null) return this;
+            this.bufferSizeBytes = bufferSizeBytes;
             return this;
         }
 
@@ -186,7 +199,7 @@ public class S3DeliveryStream implements DeliveryStream {
         public S3DeliveryStream build() {
             if (isEmpty(name)) throw new IllegalArgumentException("Delivery stream name cannot be empty");
             if (isEmpty(s3BucketArn)) throw new IllegalArgumentException("S3 Bucket ARN cannot be empty");
-            return new S3DeliveryStream(name, s3Client, s3BucketArn, s3Prefix, bufferIntervalSeconds, bufferSizeMb, compressionFormat);
+            return new S3DeliveryStream(name, s3Client, s3BucketArn, s3Prefix, bufferIntervalMs, bufferSizeBytes, compressionFormat);
         }
 
     }
