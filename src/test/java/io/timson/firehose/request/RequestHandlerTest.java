@@ -5,12 +5,18 @@ import io.timson.firehose.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 
+import static com.jcabi.matchers.RegexMatchers.matchesPattern;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isNull;
@@ -30,6 +36,12 @@ public class RequestHandlerTest {
     @Mock
     private HttpServletResponse response;
 
+    @Mock
+    private PrintWriter responseWriter;
+
+    @Captor
+    private ArgumentCaptor<String> body;
+
     private RequestHandler requestHandler;
 
     @Before
@@ -41,10 +53,13 @@ public class RequestHandlerTest {
     public void shouldSetResponseTo200Success_WhenValidPutRequest() throws Exception {
         final String JSON = "{\"DeliveryStreamName\":\"myDeliveryStream\",\"Record\":{\"Data\":\"bXlEYXRh\"}}";
         when(request.getReader()).thenReturn(TestUtil.createBufferedReader(JSON));
+        when(response.getWriter()).thenReturn(responseWriter);
 
         requestHandler.handlePutRequest(request, response);
 
         verify(response).setStatus(200);
+        verify(responseWriter).write(body.capture());
+        assertThat(body.getValue(), matchesPattern("\\{\"RecordId\":\"[A-Za-z0-9\\/\\+]{224}\"\\}"));
     }
 
     @Test
@@ -76,10 +91,13 @@ public class RequestHandlerTest {
                 + "\"CompressionFormat\":\"GZIP\"}}";
 
         when(request.getReader()).thenReturn(TestUtil.createBufferedReader(JSON));
+        when(response.getWriter()).thenReturn(responseWriter);
 
         requestHandler.handleCreateStreamRequest(request, response);
 
         verify(response).setStatus(200);
+        verify(responseWriter).write(body.capture());
+        assertThat(body.getValue(), is("{\"DeliveryStreamARN\":\"arn:aws:firehose:us-east-1:123456789012:deliverystream/myDeliveryStream\"}"));
     }
 
     @Test
@@ -106,12 +124,14 @@ public class RequestHandlerTest {
     @Test
     public void shouldSetResponseTo200Success_WhenValidDeleteStreamRequest() throws Exception {
         final String JSON = "{\"DeliveryStreamName\":\"myDeliveryStream\"}";
-
         when(request.getReader()).thenReturn(TestUtil.createBufferedReader(JSON));
+        when(response.getWriter()).thenReturn(responseWriter);
 
         requestHandler.handleDeleteStreamRequest(request, response);
 
         verify(response).setStatus(200);
+        verify(responseWriter).write(body.capture());
+        assertThat(body.getValue(), is("{\"DeliveryStreamName\":\"myDeliveryStream\"}"));
     }
 
     @Test

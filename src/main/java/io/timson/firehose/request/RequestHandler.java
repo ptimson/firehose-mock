@@ -2,6 +2,9 @@ package io.timson.firehose.request;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import io.timson.firehose.response.CreateDeliveryStreamResponse;
+import io.timson.firehose.response.DeleteDeliveryStreamResponse;
+import io.timson.firehose.response.PutResponse;
 import io.timson.firehose.stream.DeliveryStreamService;
 import org.apache.commons.io.IOUtils;
 
@@ -30,13 +33,16 @@ public class RequestHandler {
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
+        addBody(response, new PutResponse().body());
     }
 
     public void handleCreateStreamRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        CreateDeliveryStreamRequest createDeliveryStreamRequest;
 
         try {
             String json = extractRequestBody(request);
-            CreateDeliveryStreamRequest createDeliveryStreamRequest = CreateDeliveryStreamRequest.fromJson(json);
+            createDeliveryStreamRequest = CreateDeliveryStreamRequest.fromJson(json);
+
             deliveryStreamService.createStream(createDeliveryStreamRequest);
         } catch (IllegalArgumentException | JsonParseException | JsonMappingException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -44,13 +50,16 @@ public class RequestHandler {
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
+        String streamName = createDeliveryStreamRequest.getName();
+        addBody(response, new CreateDeliveryStreamResponse(streamName).body());
     }
 
     public void handleDeleteStreamRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        DeleteDeliveryStreamRequest deleteDeliveryStreamRequest;
 
         try {
             String json = extractRequestBody(request);
-            DeleteDeliveryStreamRequest deleteDeliveryStreamRequest = DeleteDeliveryStreamRequest.fromJson(json);
+            deleteDeliveryStreamRequest = DeleteDeliveryStreamRequest.fromJson(json);
             deliveryStreamService.deleteStream(deleteDeliveryStreamRequest.getName());
         } catch (IllegalArgumentException | JsonParseException | JsonMappingException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -58,11 +67,19 @@ public class RequestHandler {
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
+        String streamName = deleteDeliveryStreamRequest.getName();
+        addBody(response, new DeleteDeliveryStreamResponse(streamName).body());
     }
 
     private String extractRequestBody(HttpServletRequest request) throws IOException {
         final BufferedReader reader = request.getReader();
         return IOUtils.toString(reader);
+    }
+
+    private void addBody(HttpServletResponse response, String body) throws IOException {
+        response.getWriter().write(body);
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 
 }
