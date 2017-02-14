@@ -1,5 +1,4 @@
 # Firehose Mock
-[![Github All Releases](https://img.shields.io/github/downloads/ptimson/firehose-mock/total.svg?style=flat)](https://github.com/ptimson/firehose-mock/releases/)
 An embedded Java mock for AWS Kinesis Firehose
 
 ## Getting Started
@@ -41,7 +40,7 @@ firehoseClient.putRecord(putRequest);
 #### Create CreateDeliveryStream Request
 ```java
 ExtendedS3DestinationConfiguration s3StreamConfig = AWSFirehoseUtil.createS3DeliveryStream()
-        .withS3BucketArn("arn:myBucketArn")
+        .withS3BucketArn("arn:aws:s3:::myBucket")
         .withBufferIntervalSeconds(10)
         .withBufferSizeMB(1024)
         .withCompressionFormat(CompressionFormat.GZIP)
