@@ -49,6 +49,9 @@ public class FirehoseMock {
     public void start() throws Exception {
         if (!server.isStarted()) {
             server.start();
+            while (!server.isRunning()) {
+                Thread.sleep(1);
+            }
         }
     }
 
@@ -62,6 +65,9 @@ public class FirehoseMock {
             Set<String> streams = new HashSet<>(deliveryStreamService.listStreams());
             streams.forEach(deliveryStreamService::deleteStream);
             server.stop();
+            while (server.isRunning()) {
+                Thread.sleep(1);
+            }
         }
     }
 
@@ -88,7 +94,7 @@ public class FirehoseMock {
      */
     public static class Builder {
         private Integer port;
-        private AmazonS3 amazonS3Client = AmazonS3ClientBuilder.defaultClient();
+        private AmazonS3 amazonS3Client;
 
         public Builder withPort(Integer port) {
             this.port = port;
@@ -103,6 +109,9 @@ public class FirehoseMock {
         public FirehoseMock build() {
             if (port == null) {
                 port = FirehoseUtil.randomFreePort();
+            }
+            if (amazonS3Client == null) {
+                amazonS3Client = AmazonS3ClientBuilder.defaultClient();
             }
             return new FirehoseMock(port, amazonS3Client);
         }
