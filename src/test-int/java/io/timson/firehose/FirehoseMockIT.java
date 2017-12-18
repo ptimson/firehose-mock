@@ -41,6 +41,7 @@ public class FirehoseMockIT {
     @Test
     public void shouldAcceptPutRecordRequest() throws Exception {
         final String streamName = "myDeliveryStream";
+        createS3DeliveryStream(streamName);
         PutRecordRequest putRequest = AWSFirehoseUtil.createPutRequest(streamName, "myData");
         firehoseClient.putRecord(putRequest);
     }
@@ -51,7 +52,7 @@ public class FirehoseMockIT {
                 .withBufferIntervalSeconds(10)
                 .withBufferSizeMB(1024)
                 .withCompressionFormat(CompressionFormat.GZIP)
-                .withS3BucketArn("myBucketArn")
+                .withS3BucketArn("arn:aws:s3:::myBucketArn")
                 .withS3Prefix("myPrefix")
                 .build();
         final String streamName = "myDeliveryStream";
@@ -62,6 +63,7 @@ public class FirehoseMockIT {
     @Test
     public void shouldAcceptDeleteDeliveryStreamRequest() throws Exception {
         final String streamName = "myDeliveryStream";
+        createS3DeliveryStream(streamName);
         DeleteDeliveryStreamRequest deleteStreamRequest = AWSFirehoseUtil.deleteDeliveryStreamRequest(streamName);
         firehoseClient.deleteDeliveryStream(deleteStreamRequest);
     }
@@ -69,20 +71,24 @@ public class FirehoseMockIT {
     @Test
     public void shouldWriteToS3WhenReachedBufferSize() throws Exception {
         final String streamName = "myDeliveryStream";
+        createS3DeliveryStream(streamName);
+        String data = TestUtil.createStringOfSize(512 * KILOBYTES);
+        PutRecordRequest putRequest = AWSFirehoseUtil.createPutRequest(streamName, data);
+        firehoseClient.putRecord(putRequest);
+        firehoseClient.putRecord(putRequest);
+        firehoseClient.putRecord(putRequest);
+    }
+
+    private void createS3DeliveryStream(String streamName) {
         final ExtendedS3DestinationConfiguration s3StreamConfig = AWSFirehoseUtil.createS3DeliveryStream()
                 .withBufferIntervalSeconds(4)
                 .withBufferSizeMB(1)
                 .withCompressionFormat(CompressionFormat.GZIP)
-                .withS3BucketArn("arn:aws:s3:::scv-consumer-lambda-temp")
+                .withS3BucketArn("arn:aws:s3:::firehose-mock-testing")
                 .withS3Prefix("kfh/")
                 .build();
         CreateDeliveryStreamRequest createStreamRequest = AWSFirehoseUtil.createDeliveryStreamRequest(streamName, s3StreamConfig);
-        final CreateDeliveryStreamResult deliveryStream = firehoseClient.createDeliveryStream(createStreamRequest);
-        String data = TestUtil.createStringOfSize(512 * KILOBYTES);
-        PutRecordRequest putRequest = AWSFirehoseUtil.createPutRequest(streamName, data);
-        final PutRecordResult putRecordResult = firehoseClient.putRecord(putRequest);
-        firehoseClient.putRecord(putRequest);
-        firehoseClient.putRecord(putRequest);
+        firehoseClient.createDeliveryStream(createStreamRequest);
     }
 
 }
