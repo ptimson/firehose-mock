@@ -1,21 +1,14 @@
 package io.timson.firehose;
 
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
-import com.amazonaws.services.kinesisfirehose.model.CompressionFormat;
-import com.amazonaws.services.kinesisfirehose.model.CreateDeliveryStreamRequest;
-import com.amazonaws.services.kinesisfirehose.model.CreateDeliveryStreamResult;
-import com.amazonaws.services.kinesisfirehose.model.DeleteDeliveryStreamRequest;
-import com.amazonaws.services.kinesisfirehose.model.ExtendedS3DestinationConfiguration;
-import com.amazonaws.services.kinesisfirehose.model.PutRecordRequest;
-import com.amazonaws.services.kinesisfirehose.model.PutRecordResult;
+import com.amazonaws.services.kinesisfirehose.model.*;
 import io.timson.firehose.aws.AWSFirehoseUtil;
 import io.timson.firehose.test.TestUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-// TODO Should be ITs
-public class FirehoseMockIT {
+public class S3DeliveryStreamIntegrationTests {
 
     private static final String ENDPOINT = "http://127.0.0.1:7070";
     private static final String REGION = "eu-west-1";

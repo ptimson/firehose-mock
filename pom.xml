@@ -59,6 +59,7 @@
         <mockito.all.version>1.9.5</mockito.all.version>
         <nexus.staging.maven.plugin.version>1.6.7</nexus.staging.maven.plugin.version>
         <snappy.java.version>1.1.3-M1</snappy.java.version>
+        <jest.client.version>2.0.4</jest.client.version>
     </properties>
 
     <dependencies>
@@ -96,6 +97,11 @@
             <groupId>org.xerial.snappy</groupId>
             <artifactId>snappy-java</artifactId>
             <version>${snappy.java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.searchbox</groupId>
+            <artifactId>jest</artifactId>
+            <version>${jest.client.version}</version>
         </dependency>
 
         <dependency>

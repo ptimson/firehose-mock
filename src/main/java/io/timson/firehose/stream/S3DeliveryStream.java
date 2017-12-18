@@ -18,7 +18,6 @@ import static io.timson.firehose.util.FirehoseUtil.isEmpty;
 import static java.time.ZoneOffset.UTC;
 
 public class S3DeliveryStream implements DeliveryStream {
-
     private static final Logger logger = Logger.getLogger(S3DeliveryStream.class.getName());
 
     private static final Charset UTF_8 = Charset.forName("UTF-8");
