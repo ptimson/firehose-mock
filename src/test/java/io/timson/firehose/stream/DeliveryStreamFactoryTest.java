@@ -21,7 +21,7 @@ public class DeliveryStreamFactoryTest {
 
     @Before
     public void setUp() throws Exception {
-        deliveryStreamFactory = new DeliveryStreamFactory(s3Client);
+        deliveryStreamFactory = new DeliveryStreamFactory(s3Client, null);
     }
 
     @Test

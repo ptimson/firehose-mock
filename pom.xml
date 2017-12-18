@@ -6,7 +6,7 @@
 
     <groupId>io.timson</groupId>
     <artifactId>firehose-mock</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 
     <name>Firehose Mock</name>
     <url>https://github.com/ptimson/firehose-mock</url>
@@ -27,19 +27,6 @@
             <email>p@timson.me</email>
         </developer>
     </developers>
-
-    <scm>
-        <connection>scm:git:git@github.com:ptimson/firehose-mock.git</connection>
-        <developerConnection>scm:git:git@github.com:ptimson/firehose-mock.git</developerConnection>
-        <url>git@github.com:ptimson/firehose-mock.git</url>
-    </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <properties>
         <aws.java.sdk.kinesis.version>1.11.84</aws.java.sdk.kinesis.version>
@@ -163,31 +150,6 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${nexus.staging.maven.plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>${maven.gpg.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>

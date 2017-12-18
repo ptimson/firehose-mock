@@ -2,12 +2,16 @@ package io.timson.firehose;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.config.HttpClientConfig;
 import io.timson.firehose.aws.S3Client;
 import io.timson.firehose.request.RequestHandler;
 import io.timson.firehose.servlet.RootServlet;
 import io.timson.firehose.stream.DeliveryStreamFactory;
 import io.timson.firehose.stream.DeliveryStreamService;
 import io.timson.firehose.util.FirehoseUtil;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -24,7 +28,7 @@ public class FirehoseMock {
     private final DeliveryStreamService deliveryStreamService;
 
 
-    private FirehoseMock(Integer port, AmazonS3 amazonS3Client) {
+    private FirehoseMock(Integer port, AmazonS3 amazonS3Client, JestClient jestClient) {
         this.port = port;
 
         server = new Server(port);
@@ -34,7 +38,7 @@ public class FirehoseMock {
         server.setHandler(context);
 
         S3Client s3Client = new S3Client(amazonS3Client);
-        DeliveryStreamFactory deliveryStreamFactory = new DeliveryStreamFactory(s3Client);
+        DeliveryStreamFactory deliveryStreamFactory = new DeliveryStreamFactory(s3Client, jestClient);
         deliveryStreamService = new DeliveryStreamService(deliveryStreamFactory);
 
         RequestHandler requestHandler = new RequestHandler(deliveryStreamService);
@@ -95,6 +99,7 @@ public class FirehoseMock {
     public static class Builder {
         private Integer port;
         private AmazonS3 amazonS3Client;
+        private JestClient jestClient;
 
         public Builder withPort(Integer port) {
             this.port = port;
@@ -106,6 +111,11 @@ public class FirehoseMock {
             return this;
         }
 
+        public Builder withJestClient(JestClient jestClient) {
+            this.jestClient = jestClient;
+            return this;
+        }
+
         public FirehoseMock build() {
             if (port == null) {
                 port = FirehoseUtil.randomFreePort();
@@ -113,7 +123,10 @@ public class FirehoseMock {
             if (amazonS3Client == null) {
                 amazonS3Client = AmazonS3ClientBuilder.defaultClient();
             }
-            return new FirehoseMock(port, amazonS3Client);
+            if(jestClient == null) {
+                jestClient = new JestClientFactory().getObject();
+            }
+            return new FirehoseMock(port, amazonS3Client, jestClient);
         }
 
     }
