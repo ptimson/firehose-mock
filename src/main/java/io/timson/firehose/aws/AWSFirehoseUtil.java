@@ -3,11 +3,7 @@ package io.timson.firehose.aws;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehoseClientBuilder;
-import com.amazonaws.services.kinesisfirehose.model.CreateDeliveryStreamRequest;
-import com.amazonaws.services.kinesisfirehose.model.DeleteDeliveryStreamRequest;
-import com.amazonaws.services.kinesisfirehose.model.ExtendedS3DestinationConfiguration;
-import com.amazonaws.services.kinesisfirehose.model.PutRecordRequest;
-import com.amazonaws.services.kinesisfirehose.model.Record;
+import com.amazonaws.services.kinesisfirehose.model.*;
 
 import java.nio.ByteBuffer;
 
@@ -55,10 +51,24 @@ public class AWSFirehoseUtil {
      * @param config             ExtendedS3DestinationConfiguration containing config for the new S3 Delivery Stream.
      * @return A CreateDeliveryStreamRequest to be sent using the Firehose client.
      */
-    public static CreateDeliveryStreamRequest createDeliveryStreamRequest(String deliveryStreamName, ExtendedS3DestinationConfiguration config) {
+    public static CreateDeliveryStreamRequest createS3DeliveryStreamRequest(String deliveryStreamName, ExtendedS3DestinationConfiguration config) {
         CreateDeliveryStreamRequest createDeliveryStreamRequest = new CreateDeliveryStreamRequest();
         createDeliveryStreamRequest.setDeliveryStreamName(deliveryStreamName);
         createDeliveryStreamRequest.setExtendedS3DestinationConfiguration(config);
+        return createDeliveryStreamRequest;
+    }
+
+    /**
+     * Create a CreateDeliveryStreamRequest request for a new Firehose Elastic Search Delivery Stream.
+     *
+     * @param deliveryStreamName Name of Firehose stream.
+     * @param config             ElasticsearchDestinationConfiguration containing config for the new Elastic Search Delivery Stream.
+     * @return A CreateDeliveryStreamRequest to be sent using the Firehose client.
+     */
+    public static CreateDeliveryStreamRequest createESDeliveryStreamRequest(String deliveryStreamName, ElasticsearchDestinationConfiguration config) {
+        CreateDeliveryStreamRequest createDeliveryStreamRequest = new CreateDeliveryStreamRequest();
+        createDeliveryStreamRequest.setDeliveryStreamName(deliveryStreamName);
+        createDeliveryStreamRequest.setElasticsearchDestinationConfiguration(config);
         return createDeliveryStreamRequest;
     }
 
@@ -69,6 +79,15 @@ public class AWSFirehoseUtil {
      */
     public static S3StreamRequestBuilder createS3DeliveryStream() {
         return new S3StreamRequestBuilder();
+    }
+
+    /**
+     * Builder to create ElasticSearchDestinationConfiguration for a new Elastic Search Delivery Stream.
+     *
+     * @return A ElasticSearchStreamRequestBuilder object.
+     */
+    public static ElasticSearchStreamRequestBuilder createElasticSearchDeliveryStream() {
+        return new ElasticSearchStreamRequestBuilder();
     }
 
     /**

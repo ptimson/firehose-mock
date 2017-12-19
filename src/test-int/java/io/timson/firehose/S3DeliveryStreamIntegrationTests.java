@@ -49,7 +49,7 @@ public class S3DeliveryStreamIntegrationTests {
                 .withS3Prefix("myPrefix")
                 .build();
         final String streamName = "myDeliveryStream";
-        CreateDeliveryStreamRequest createStreamRequest = AWSFirehoseUtil.createDeliveryStreamRequest(streamName, s3StreamConfig);
+        CreateDeliveryStreamRequest createStreamRequest = AWSFirehoseUtil.createS3DeliveryStreamRequest(streamName, s3StreamConfig);
         firehoseClient.createDeliveryStream(createStreamRequest);
     }
 
@@ -80,7 +80,7 @@ public class S3DeliveryStreamIntegrationTests {
                 .withS3BucketArn("arn:aws:s3:::firehose-mock-testing")
                 .withS3Prefix("kfh/")
                 .build();
-        CreateDeliveryStreamRequest createStreamRequest = AWSFirehoseUtil.createDeliveryStreamRequest(streamName, s3StreamConfig);
+        CreateDeliveryStreamRequest createStreamRequest = AWSFirehoseUtil.createS3DeliveryStreamRequest(streamName, s3StreamConfig);
         firehoseClient.createDeliveryStream(createStreamRequest);
     }
 
