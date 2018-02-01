@@ -6,7 +6,7 @@
 
     <groupId>com.morrisons</groupId>
     <artifactId>loyalty-firehose-mock</artifactId>
-    <version>1.0-10</version>
+    <version>1.0</version>
 
     <name>Firehose Mock</name>
     <url>https://github.com/ptimson/firehose-mock</url>
