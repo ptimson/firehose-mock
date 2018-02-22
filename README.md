@@ -124,6 +124,7 @@ See [AWS DeleteDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/late
 
 ## License
 Copyright (C) 2017 Peter Timson
+
 Copyright (C) 2018 Tomasz Bielaszewski
 
 Licensed under the Apache License, Version 2.0
