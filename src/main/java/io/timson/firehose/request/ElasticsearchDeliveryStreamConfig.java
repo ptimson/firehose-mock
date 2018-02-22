@@ -22,9 +22,6 @@ public class ElasticsearchDeliveryStreamConfig {
     @JsonProperty("TypeName")
     private String docType;
 
-    @JsonProperty("CompressionFormat")
-    private CompressionFormat compressionFormat;
-
     @JsonProperty("BufferingHints")
     private BufferingHints bufferingHints;
 
@@ -54,10 +51,6 @@ public class ElasticsearchDeliveryStreamConfig {
 
     public String getIndexRotationPeriod() {
         return indexRotationPeriod;
-    }
-
-    public CompressionFormat getCompressionFormat() {
-        return compressionFormat;
     }
 
     public BufferingHints getBufferingHints() {

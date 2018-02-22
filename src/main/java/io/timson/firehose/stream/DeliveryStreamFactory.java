@@ -51,7 +51,6 @@ public class DeliveryStreamFactory {
                 .withJestClient(jestClient)
                 .withBufferIntervalSeconds(request.getBufferingHints().getBufferIntervalSeconds())
                 .withBufferSizeMB(request.getBufferingHints().getBufferSizeMB())
-                .withCompressionFormat(request.getCompressionFormat())
                 .withDomainARN(request.getDomainARN())
                 .withRoleARN(request.getRoleARN())
                 .build();

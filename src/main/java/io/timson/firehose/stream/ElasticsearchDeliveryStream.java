@@ -22,22 +22,19 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
     private final String typeName;
     private final Long bufferIntervalSeconds;
     private final Long bufferSizeMB;
-    private final CompressionFormat compressionFormat;
 
     public ElasticsearchDeliveryStream(JestClient jestClient,
                                        String streamName,
                                        String indexName,
                                        String typeName,
                                        Long bufferIntervalSeconds,
-                                       Long bufferSizeMB,
-                                       CompressionFormat compressionFormat) {
+                                       Long bufferSizeMB) {
         this.jestClient = jestClient;
         this.streamName = streamName;
         this.indexName = indexName;
         this.typeName = typeName;
         this.bufferIntervalSeconds = bufferIntervalSeconds;
         this.bufferSizeMB = bufferSizeMB;
-        this.compressionFormat = compressionFormat;
     }
 
     @Override
@@ -74,7 +71,6 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
         private String roleARN;
         private Long bufferIntervalSeconds = 300 * 1000L; // 300 s
         private Long bufferSizeMB = 5 * MEGABYTE; // 5 MiB
-        private CompressionFormat compressionFormat = UNCOMPRESSED;
 
         public ElasticsearchDeliveryStreamBuilder withJestClient(JestClient jestClient) {
             this.jestClient = jestClient;
@@ -116,11 +112,6 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
             return this;
         }
 
-        public ElasticsearchDeliveryStreamBuilder withCompressionFormat(CompressionFormat compressionFormat) {
-            this.compressionFormat = compressionFormat;
-            return this;
-        }
-
         public ElasticsearchDeliveryStream build() {
             if (isEmpty(streamName)) throw new IllegalArgumentException("Delivery stream name cannot be empty");
             if (isEmpty(indexName)) throw new IllegalArgumentException("ES index name cannot be empty");
@@ -128,7 +119,7 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
             if (isEmpty(domainARN)) throw new IllegalArgumentException("Domain ARN cannot be empty");
             if (isEmpty(roleARN)) throw new IllegalArgumentException("Role ARN cannot be empty");
             //TODO The configuration for the backup Amazon S3 location is also mandatory (by docs)
-            return new ElasticsearchDeliveryStream(jestClient, streamName, indexName, typeName, bufferIntervalSeconds, bufferSizeMB, compressionFormat);
+            return new ElasticsearchDeliveryStream(jestClient, streamName, indexName, typeName, bufferIntervalSeconds, bufferSizeMB);
         }
     }
 }
