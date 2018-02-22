@@ -47,12 +47,13 @@ public class DeliveryStreamFactory {
         return new ElasticsearchDeliveryStream.ElasticsearchDeliveryStreamBuilder()
                 .withStreamName(streamName)
                 .withIndexName(request.getIndexName())
-                .withDocType(request.getDocType())
+                .withDocType(request.getTypeName())
                 .withJestClient(jestClient)
-                .withBufferIntervalSeconds(request.getBufferingHints().getBufferIntervalSeconds())
-                .withBufferSizeMB(request.getBufferingHints().getBufferSizeMB())
+                .withBufferIntervalSeconds(Optional.ofNullable(request.getBufferingHints()).orElseGet(BufferingHints::new).getBufferIntervalSeconds())
+                .withBufferSizeMB(Optional.ofNullable(request.getBufferingHints()).orElseGet(BufferingHints::new).getBufferSizeMB())
                 .withDomainARN(request.getDomainARN())
                 .withRoleARN(request.getRoleARN())
+                .withIndexRotationPeriod(request.getIndexRotationPeriod())
                 .build();
     }
 

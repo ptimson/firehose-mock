@@ -1,6 +1,5 @@
 package io.timson.firehose.request;
 
-import com.amazonaws.services.kinesisfirehose.model.CompressionFormat;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,7 +19,7 @@ public class ElasticsearchDeliveryStreamConfig {
     private String indexName;
 
     @JsonProperty("TypeName")
-    private String docType;
+    private String typeName;
 
     @JsonProperty("BufferingHints")
     private BufferingHints bufferingHints;
@@ -29,7 +28,6 @@ public class ElasticsearchDeliveryStreamConfig {
     private String roleARN;
 
     private Map<String, Object> otherProperties = new HashMap<>();
-
 
     @JsonAnyGetter
     public Map<String, Object> any() {
@@ -45,8 +43,8 @@ public class ElasticsearchDeliveryStreamConfig {
         return indexName;
     }
 
-    public String getDocType() {
-        return docType;
+    public String getTypeName() {
+        return typeName;
     }
 
     public String getIndexRotationPeriod() {

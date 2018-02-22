@@ -20,6 +20,7 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
     private final String streamName;
     private final String indexName;
     private final String typeName;
+    private final String indexRotationPeriod;
     private final Long bufferIntervalSeconds;
     private final Long bufferSizeMB;
 
@@ -27,12 +28,14 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
                                        String streamName,
                                        String indexName,
                                        String typeName,
+                                       String indexRotationPeriod,
                                        Long bufferIntervalSeconds,
                                        Long bufferSizeMB) {
         this.jestClient = jestClient;
         this.streamName = streamName;
         this.indexName = indexName;
         this.typeName = typeName;
+        this.indexRotationPeriod = indexRotationPeriod;
         this.bufferIntervalSeconds = bufferIntervalSeconds;
         this.bufferSizeMB = bufferSizeMB;
     }
@@ -69,6 +72,7 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
         private String typeName;
         private String domainARN;
         private String roleARN;
+        private String indexRotationPeriod = "MONTH";
         private Long bufferIntervalSeconds = 300 * 1000L; // 300 s
         private Long bufferSizeMB = 5 * MEGABYTE; // 5 MiB
 
@@ -102,12 +106,20 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
             return this;
         }
 
+        public ElasticsearchDeliveryStreamBuilder withIndexRotationPeriod(String indexRotationPeriod) {
+            if(indexRotationPeriod == null) return this;
+            this.indexRotationPeriod = indexRotationPeriod;
+            return this;
+        }
+
         public ElasticsearchDeliveryStreamBuilder withBufferIntervalSeconds(Integer bufferIntervalSeconds) {
+            if (bufferIntervalSeconds == null) return this;
             this.bufferIntervalSeconds = bufferIntervalSeconds * 1000L;
             return this;
         }
 
         public ElasticsearchDeliveryStreamBuilder withBufferSizeMB(Integer bufferSizeMB) {
+            if (bufferSizeMB == null) return this;
             this.bufferSizeMB = bufferSizeMB * MEGABYTE;
             return this;
         }
@@ -119,7 +131,7 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
             if (isEmpty(domainARN)) throw new IllegalArgumentException("Domain ARN cannot be empty");
             if (isEmpty(roleARN)) throw new IllegalArgumentException("Role ARN cannot be empty");
             //TODO The configuration for the backup Amazon S3 location is also mandatory (by docs)
-            return new ElasticsearchDeliveryStream(jestClient, streamName, indexName, typeName, bufferIntervalSeconds, bufferSizeMB);
+            return new ElasticsearchDeliveryStream(jestClient, streamName, indexName, typeName, indexRotationPeriod, bufferIntervalSeconds, bufferSizeMB);
         }
     }
 }
