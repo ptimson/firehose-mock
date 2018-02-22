@@ -130,7 +130,6 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
             if (isEmpty(typeName)) throw new IllegalArgumentException("ES type name cannot be empty");
             if (isEmpty(domainARN)) throw new IllegalArgumentException("Domain ARN cannot be empty");
             if (isEmpty(roleARN)) throw new IllegalArgumentException("Role ARN cannot be empty");
-            //TODO The configuration for the backup Amazon S3 location is also mandatory (by docs)
             return new ElasticsearchDeliveryStream(jestClient, streamName, indexName, typeName, indexRotationPeriod, bufferIntervalSeconds, bufferSizeMB);
         }
     }
