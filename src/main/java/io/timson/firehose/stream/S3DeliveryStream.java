@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -36,7 +37,6 @@ public class S3DeliveryStream implements DeliveryStream {
     private StringBuilder buffer = new StringBuilder();
 
     private long bufferSize = 0;
-    private TimerTask flushTimerTask;
     private Timer flushTimer;
 
     private S3DeliveryStream(String name,
@@ -63,7 +63,7 @@ public class S3DeliveryStream implements DeliveryStream {
     }
 
     private void startFlushTimer() {
-        flushTimerTask = new TimerTask() {
+        TimerTask flushTimerTask = new TimerTask() {
             @Override
             public void run() {
                 flush();
@@ -74,10 +74,8 @@ public class S3DeliveryStream implements DeliveryStream {
     }
 
     private void stopFlushTimer() {
-        if (flushTimer == null) {
-            return;
-        }
-        flushTimer.cancel();
+        Optional.ofNullable(flushTimer)
+                .ifPresent(Timer::cancel);
     }
 
     @Override

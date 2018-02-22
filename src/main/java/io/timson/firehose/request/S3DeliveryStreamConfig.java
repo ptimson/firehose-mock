@@ -19,16 +19,10 @@ public class S3DeliveryStreamConfig {
     @JsonProperty("CompressionFormat")
     private CompressionFormat compressionFormat;
 
-    private Integer bufferIntervalSeconds;
-    private Integer bufferSizeMb;
+    @JsonProperty("BufferingHints")
+    private BufferingHints bufferingHints;
 
     private Map<String, Object> otherProperties = new HashMap<>();
-
-    @JsonProperty("BufferingHints")
-    public void setBuffer(Map<String, Object> bufferConfig) {
-        this.bufferIntervalSeconds = (Integer) bufferConfig.get("IntervalInSeconds");
-        this.bufferSizeMb = (Integer) bufferConfig.get("SizeInMBs");
-    }
 
     @JsonAnyGetter
     public Map<String, Object> any() {
@@ -52,12 +46,7 @@ public class S3DeliveryStreamConfig {
         return compressionFormat;
     }
 
-    public Integer getBufferIntervalSeconds() {
-        return bufferIntervalSeconds;
+    public BufferingHints getBufferingHints() {
+        return bufferingHints;
     }
-
-    public Integer getBufferSizeMB() {
-        return bufferSizeMb;
-    }
-
 }

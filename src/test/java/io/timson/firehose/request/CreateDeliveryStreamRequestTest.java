@@ -26,8 +26,8 @@ public class CreateDeliveryStreamRequestTest {
         assertThat(s3Config, not(nullValue()));
         assertThat(s3Config.getS3BucketArn(), is("arn:aws:s3:::scv-consumer-lambda-temp"));
         assertThat(s3Config.getS3Prefix(), is("kfh/"));
-        assertThat(s3Config.getBufferSizeMB(), is(1));
-        assertThat(s3Config.getBufferIntervalSeconds(), is(4));
+        assertThat(s3Config.getBufferingHints().getBufferSizeMB(), is(1));
+        assertThat(s3Config.getBufferingHints().getBufferIntervalSeconds(), is(4));
         assertThat(s3Config.getCompressionFormat(), is(CompressionFormat.GZIP));
     }
 
@@ -41,8 +41,7 @@ public class CreateDeliveryStreamRequestTest {
 
         S3DeliveryStreamConfig s3Config = createRequest.getS3DeliveryStreamRequest();
         assertThat(s3Config, not(nullValue()));
-        assertThat(s3Config.getBufferSizeMB(), is(nullValue()));
-        assertThat(s3Config.getBufferIntervalSeconds(), is(nullValue()));
+        assertThat(s3Config.getBufferingHints(), is(nullValue()));
     }
 
     @Test
@@ -59,8 +58,8 @@ public class CreateDeliveryStreamRequestTest {
         assertThat(s3Config, not(nullValue()));
         assertThat(s3Config.getS3BucketArn(), is("arn:aws:s3:::scv-consumer-lambda-temp"));
         assertThat(s3Config.getS3Prefix(), is("kfh/"));
-        assertThat(s3Config.getBufferSizeMB(), is(1));
-        assertThat(s3Config.getBufferIntervalSeconds(), is(4));
+        assertThat(s3Config.getBufferingHints().getBufferSizeMB(), is(1));
+        assertThat(s3Config.getBufferingHints().getBufferIntervalSeconds(), is(4));
         assertThat(s3Config.getCompressionFormat(), is(CompressionFormat.GZIP));
     }
 

@@ -2,7 +2,7 @@ package io.timson.firehose.aws;
 
 import com.amazonaws.services.kinesisfirehose.model.ElasticsearchDestinationConfiguration;
 
-public class ElasticSearchStreamRequestBuilder {
+public class ElasticsearchStreamRequestBuilder {
 
     private String indexName;
     private String docType;
@@ -14,12 +14,12 @@ public class ElasticSearchStreamRequestBuilder {
         return config;
     }
 
-    public ElasticSearchStreamRequestBuilder withIndexName(String indexName) {
+    public ElasticsearchStreamRequestBuilder withIndexName(String indexName) {
         this.indexName = indexName;
         return this;
     }
 
-    public ElasticSearchStreamRequestBuilder withDocType(String docType) {
+    public ElasticsearchStreamRequestBuilder withDocType(String docType) {
         this.docType = docType;
         return this;
     }

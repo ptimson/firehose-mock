@@ -20,7 +20,7 @@ public class CreateDeliveryStreamRequest {
     private S3DeliveryStreamConfig s3DeliveryStreamRequest;
 
     @JsonProperty("ElasticsearchDestinationConfiguration")
-    private ElasticSearchDeliveryStreamConfig elasticSearchDeliveryStreamConfig;
+    private ElasticsearchDeliveryStreamConfig elasticsearchDeliveryStreamConfig;
 
     private Map<String, Object> otherProperties = new HashMap<>();
 
@@ -46,7 +46,7 @@ public class CreateDeliveryStreamRequest {
         return s3DeliveryStreamRequest;
     }
 
-    public ElasticSearchDeliveryStreamConfig getElasticSearchDeliveryStreamRequest() {
-        return elasticSearchDeliveryStreamConfig;
+    public ElasticsearchDeliveryStreamConfig getElasticsearchDeliveryStreamRequest() {
+        return elasticsearchDeliveryStreamConfig;
     }
 }

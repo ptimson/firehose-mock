@@ -1,6 +1,5 @@
 package io.timson.firehose;
 
-public class ElasticSearchDeliveryStreamIntegrationTests {
+public class ElasticsearchDeliveryStreamIntegrationTests {
     //TODO
-
 }

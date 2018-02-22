@@ -59,13 +59,13 @@ public class AWSFirehoseUtil {
     }
 
     /**
-     * Create a CreateDeliveryStreamRequest request for a new Firehose Elastic Search Delivery Stream.
+     * Create a CreateDeliveryStreamRequest request for a new Firehose Elasticsearch Delivery Stream.
      *
      * @param deliveryStreamName Name of Firehose stream.
-     * @param config             ElasticsearchDestinationConfiguration containing config for the new Elastic Search Delivery Stream.
+     * @param config             ElasticsearchDestinationConfiguration containing config for the new Elasticsearch Delivery Stream.
      * @return A CreateDeliveryStreamRequest to be sent using the Firehose client.
      */
-    public static CreateDeliveryStreamRequest createESDeliveryStreamRequest(String deliveryStreamName, ElasticsearchDestinationConfiguration config) {
+    public static CreateDeliveryStreamRequest createElasticsearchDeliveryStreamRequest(String deliveryStreamName, ElasticsearchDestinationConfiguration config) {
         CreateDeliveryStreamRequest createDeliveryStreamRequest = new CreateDeliveryStreamRequest();
         createDeliveryStreamRequest.setDeliveryStreamName(deliveryStreamName);
         createDeliveryStreamRequest.setElasticsearchDestinationConfiguration(config);
@@ -82,12 +82,12 @@ public class AWSFirehoseUtil {
     }
 
     /**
-     * Builder to create ElasticSearchDestinationConfiguration for a new Elastic Search Delivery Stream.
+     * Builder to create ElasticsearchDestinationConfiguration for a new Elasticsearch Delivery Stream.
      *
-     * @return A ElasticSearchStreamRequestBuilder object.
+     * @return A ElasticsearchStreamRequestBuilder object.
      */
-    public static ElasticSearchStreamRequestBuilder createElasticSearchDeliveryStream() {
-        return new ElasticSearchStreamRequestBuilder();
+    public static ElasticsearchStreamRequestBuilder createElasticsearchDeliveryStream() {
+        return new ElasticsearchStreamRequestBuilder();
     }
 
     /**
