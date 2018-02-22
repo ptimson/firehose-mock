@@ -38,7 +38,7 @@ public class ElasticsearchStreamRequestBuilder {
         return this;
     }
 
-    public ElasticsearchStreamRequestBuilder withroleARN(String roleARN) {
+    public ElasticsearchStreamRequestBuilder withRoleARN(String roleARN) {
         this.roleARN = roleARN;
         return this;
     }

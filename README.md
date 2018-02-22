@@ -14,6 +14,7 @@ Integer port = firehoseMock.getPort();
 FirehoseMock firehoseMock = new FirehoseMock.Builder()
         .withPort(7070)                // Optional - If not supplied will use a random free port
         .withAmazonS3Client(amazonS3)  // Optional - If not supplied will use AmazonS3ClientBuilder.defaultClient()
+        .withJestClient(jestClient)    // Optional - If not supplied will use JestClientFactory().getObject()
         .build();
 firehoseMock.start();
 ```
@@ -46,7 +47,21 @@ ExtendedS3DestinationConfiguration s3StreamConfig = AWSFirehoseUtil.createS3Deli
         .withCompressionFormat(CompressionFormat.GZIP)
         .withS3Prefix("myPrefix")
         .build();
-CreateDeliveryStreamRequest createDeliveryStreamRequest = AWSFirehoseUtil.createDeliveryStreamRequest("myDeliverStream", s3StreamConfig);
+CreateDeliveryStreamRequest createDeliveryStreamRequest = AWSFirehoseUtil.createS3DeliveryStreamRequest("myDeliverStream", s3StreamConfig);
+firehoseClient.createDeliveryStream(createDeliveryStreamRequest);
+```
+
+```java
+ElasticsearchDestinationConfiguration elasticsearchDestinationConfiguration = AWSFirehoseUtil.createElasticsearchDeliveryStream()
+        .withIndexName("myESIndex")
+        .withTypeName("myTypeName")
+        .withRoleARN("arn:aws:iam::123456789012:user/es-user")
+        .withDomainARN("arn:aws:es:us-east-1:123456789012:domain/test/*")
+        .withIndexRotationPeriod("oneHour")
+        .withBufferSizeMb(5)
+        .withBufferSizeMb(300)
+        .build();
+CreateDeliveryStreamRequest createDeliveryStreamRequest = AWSFirehoseUtil.createElasticsearchDeliveryStreamRequest("myStream", elasticsearchDestinationConfiguration)
 firehoseClient.createDeliveryStream(createDeliveryStreamRequest);
 ```
 
@@ -70,19 +85,30 @@ Firehose Mock is a WIP and so far only supports the following 3 APIs.
 See [AWS PutRecord API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_PutRecord.html) for more details.
 
 ### CreateDeliveryStream
-Currently FirehoseMock only supports S3 Delivery Streams with the following options:  
+Currently FirehoseMock supports S3 Delivery Streams and Elasticsearch Delivery Streams with the following options:  
 ```
 {
     "DeliveryStreamName": "string",
     "ExtendedS3DestinationConfiguration": {
         "BucketARN": "string",               // Required
         "BufferingHints": {
-            "IntervalInSeconds": 300,        // Optional - Default: 300
-            "SizeInMBs": 5                   // Optional - Default: 5
+            "IntervalInSeconds": number,     // Optional - Default: 300
+            "SizeInMBs": number              // Optional - Default: 5
         },
         "CompressionFormat": "string",       // Optional - Default: UNCOMPRESSED
         "Prefix": "string"                   // Optional - Default: ""
     }
+    "ElasticsearchDestinationConfiguration": { 
+         "BufferingHints": { 
+            "IntervalInSeconds": number,     // Optional - Default: 300
+            "SizeInMBs": number              // Optional - Default: 5
+         },
+         "DomainARN": "string",
+         "IndexName": "string",
+         "IndexRotationPeriod": "string",    // Optional - Default: OneMonth
+         "RoleARN": "string",
+         "TypeName": "string"
+    },
 }
 ``` 
 See [AWS CreateDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/latest/APIReference/API_CreateDeliveryStream.html) for more details.
@@ -98,5 +124,6 @@ See [AWS DeleteDeliveryStream API Docs](http://docs.aws.amazon.com/firehose/late
 
 ## License
 Copyright (C) 2017 Peter Timson
+Copyright (C) 2018 Tomasz Bielaszewski
 
 Licensed under the Apache License, Version 2.0

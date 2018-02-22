@@ -17,7 +17,7 @@ public class ElasticsearchStreamRequestBuilderTest {
                 .withIndexName("index")
                 .withTypeName("type")
                 .withDomainARN("domainARN")
-                .withroleARN("roleARN")
+                .withRoleARN("roleARN")
                 .withIndexRotationPeriod("rotation")
                 .withBufferSizeMb(1)
                 .withBufferIntervalSeconds(2)
@@ -40,7 +40,7 @@ public class ElasticsearchStreamRequestBuilderTest {
                 .withIndexName("index")
                 .withTypeName("type")
                 .withDomainARN("domainARN")
-                .withroleARN("roleARN")
+                .withRoleARN("roleARN")
                 .withIndexRotationPeriod("rotation")
                 .build();
 

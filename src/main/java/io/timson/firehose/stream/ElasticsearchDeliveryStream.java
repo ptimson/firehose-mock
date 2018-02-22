@@ -72,7 +72,7 @@ public class ElasticsearchDeliveryStream implements DeliveryStream {
         private String typeName;
         private String domainARN;
         private String roleARN;
-        private String indexRotationPeriod = "MONTH";
+        private String indexRotationPeriod = "OneMonth";
         private Long bufferIntervalSeconds = 300 * 1000L; // 300 s
         private Long bufferSizeMB = 5 * MEGABYTE; // 5 MiB
 

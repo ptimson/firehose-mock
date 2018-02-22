@@ -4,14 +4,12 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.HttpClientConfig;
 import io.timson.firehose.aws.S3Client;
 import io.timson.firehose.request.RequestHandler;
 import io.timson.firehose.servlet.RootServlet;
 import io.timson.firehose.stream.DeliveryStreamFactory;
 import io.timson.firehose.stream.DeliveryStreamService;
 import io.timson.firehose.util.FirehoseUtil;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -123,7 +121,7 @@ public class FirehoseMock {
             if (amazonS3Client == null) {
                 amazonS3Client = AmazonS3ClientBuilder.defaultClient();
             }
-            if(jestClient == null) {
+            if (jestClient == null) {
                 jestClient = new JestClientFactory().getObject();
             }
             return new FirehoseMock(port, amazonS3Client, jestClient);
