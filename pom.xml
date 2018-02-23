@@ -6,7 +6,7 @@
 
     <groupId>io.timson</groupId>
     <artifactId>firehose-mock</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
 
     <name>Firehose Mock</name>
     <url>https://github.com/ptimson/firehose-mock</url>
