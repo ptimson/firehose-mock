@@ -38,7 +38,7 @@ public class AWSFirehoseUtilTest {
         String deliveryStreamName = "myStreamName";
         ExtendedS3DestinationConfiguration s3Config = new ExtendedS3DestinationConfiguration();
 
-        CreateDeliveryStreamRequest request = AWSFirehoseUtil.createDeliveryStreamRequest(deliveryStreamName, s3Config);
+        CreateDeliveryStreamRequest request = AWSFirehoseUtil.createS3DeliveryStreamRequest(deliveryStreamName, s3Config);
 
         assertThat(request.getDeliveryStreamName(), is(deliveryStreamName));
         assertThat(request.getExtendedS3DestinationConfiguration(), is(s3Config));
